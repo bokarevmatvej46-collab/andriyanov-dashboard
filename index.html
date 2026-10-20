@@ -5,14 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
 <title>Новые клиенты отдела Андриянова</title>
-<style>body{margin:0;background:#f6f7f6}@media (prefers-color-scheme: dark){body{background:#0e110f}} .pl{border-radius:0!important;min-height:100vh}</style>
+<style>html,body{margin:0;background:#f6f7f6}body:has(.pl[data-mode="dark"]){background:#0e110f} .pl{border-radius:0!important;min-height:100vh}</style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap">
 <style>
 #dash-root { --dash-gutter: 0; }
 /* Стиль «Кабинета тимлида»: светлый фон, белые карточки, зелёный акцент, Inter; тёмная тема переключателем */
 .pl { --pl-bg: #f6f7f6; --pl-card: #ffffff; --pl-ink: #111511; --pl-muted: #6a716b; --pl-line: #e7ebe7; --pl-blue: #138a3e; --pl-blue-soft: #e3f4e8; --pl-dark: #111511; --pl-red: #c21f1f; --pl-red-soft: #fdeceb; --pl-amber: #a46a00; --pl-amber-soft: #fdf4e2; --pl-green: #138a3e; --pl-seg: #eef1ee; --pl-bar0: #cfd8d1; --pl-onacc: #ffffff; --pl-chip: #111511; --pl-chip-ink: #ffffff;
   color-scheme: light; background: var(--pl-bg); color: var(--pl-ink); font-family: "Inter", -apple-system, "Segoe UI", Roboto, Arial, sans-serif; font-variant-numeric: tabular-nums; border-radius: 20px; overflow: hidden; }
-@media (prefers-color-scheme: dark) { .pl:not([data-mode="light"]) { --pl-bg: #0e110f; --pl-card: #171b18; --pl-ink: #eef2ee; --pl-muted: #98a19a; --pl-line: #2a302b; --pl-blue: #3ccf6e; --pl-blue-soft: #183323; --pl-dark: #eef2ee; --pl-red: #ff6b63; --pl-red-soft: #3a1b1a; --pl-amber: #f0b54a; --pl-amber-soft: #352a14; --pl-green: #3ccf6e; --pl-seg: #1f2420; --pl-bar0: #3a423c; --pl-onacc: #0e110f; --pl-chip: #eef2ee; --pl-chip-ink: #111511; color-scheme: dark; } }
 .pl[data-mode="dark"] { --pl-bg: #0e110f; --pl-card: #171b18; --pl-ink: #eef2ee; --pl-muted: #98a19a; --pl-line: #2a302b; --pl-blue: #3ccf6e; --pl-blue-soft: #183323; --pl-dark: #eef2ee; --pl-red: #ff6b63; --pl-red-soft: #3a1b1a; --pl-amber: #f0b54a; --pl-amber-soft: #352a14; --pl-green: #3ccf6e; --pl-seg: #1f2420; --pl-bar0: #3a423c; --pl-onacc: #0e110f; --pl-chip: #eef2ee; --pl-chip-ink: #111511; color-scheme: dark; }
 .pl * { box-sizing: border-box; }
 .pl .bar { display: flex; align-items: center; gap: 14px; padding: 20px 24px 0; flex-wrap: wrap; max-width: 1100px; margin-inline: auto; }
@@ -745,7 +744,7 @@ function drawWeeks() {
 }
 
 { const pl = document.getElementById('top'); const btns = pl.querySelectorAll('[data-mode-set]');
-  const isDark = () => pl.dataset.mode ? pl.dataset.mode === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark = () => pl.dataset.mode === 'dark';
   const mark = () => btns.forEach(b => b.setAttribute('aria-pressed', String((b.dataset.modeSet === 'dark') === isDark())));
   let saved = null; try { saved = localStorage.getItem('dash-mode'); } catch (e) {}
   if (saved) pl.dataset.mode = saved; mark();
