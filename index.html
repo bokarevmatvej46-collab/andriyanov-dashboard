@@ -115,14 +115,14 @@
   <div class="wrap">
     <section>
       <h1 id="pageTitle">Новые клиенты отдела Андриянова</h1>
-      <p class="lead">Новые клиенты, выручка и воронка от нового лида до оплаты по отделам Вафина и Бокарева. Сделки и воронка — из статистики лидов Victory CRM, суммы — из личных таблиц менеджеров («Учёт Русский»), сферы — из рубрик Яндекс Карт в карточке лида.</p>
+      <p class="lead">Новые клиенты, выручка и воронка от нового лида до оплаты по отделам Бокарева и Вафина. Сделки и воронка — из статистики лидов Victory CRM, суммы — из личных таблиц менеджеров («Учёт Русский»), сферы — из рубрик Яндекс Карт в карточке лида.</p>
     </section>
 
     <div>
       <div class="depts" role="group" aria-label="Отдел">
         <button type="button" data-dept="Общее" aria-pressed="true">Общее</button>
-        <button type="button" data-dept="Вафин" aria-pressed="false">Отдел Вафина</button>
         <button type="button" data-dept="Бокарев" aria-pressed="false">Отдел Бокарева</button>
+        <button type="button" data-dept="Вафин" aria-pressed="false">Отдел Вафина</button>
       </div>
       <div class="ranges" role="group" aria-label="Состав">
         <span class="lbl0">Состав:</span>
@@ -157,7 +157,7 @@
 
     <section class="card" id="compare" data-only="Общее">
       <header>
-        <h2>⚖️ Вафин и Бокарев</h2>
+        <h2>⚖️ Бокарев и Вафин</h2>
         <p class="note">Сравнение отделов за выбранный период. «На менеджера» — сделок на одного продававшего менеджера.</p>
       </header>
       <div class="scroll">
@@ -215,10 +215,10 @@
           <table data-source="sphere_vs" data-row-key="sphere">
             <thead><tr>
               <th data-field="sphere">Сфера</th>
-              <th class="num" data-field="vafin">Вафин</th>
-              <th class="num" data-field="vafin_share">Доля у Вафина</th>
               <th class="num" data-field="bokarev">Бокарев</th>
               <th class="num" data-field="bokarev_share">Доля у Бокарева</th>
+              <th class="num" data-field="vafin">Вафин</th>
+              <th class="num" data-field="vafin_share">Доля у Вафина</th>
             </tr></thead>
             <tbody></tbody>
           </table>
@@ -369,7 +369,7 @@
 <script>
 // Рабочие дни: сентябрь 2026 — 22, 1–20 октября 2026 — 14. Данные по 20.10.2026.
 const END = '2026-10-20';
-const DEPTS = ['Общее', 'Вафин', 'Бокарев'];
+const DEPTS = ['Общее', 'Бокарев', 'Вафин'];
 const amt = (d) => (d.amount === '' || d.amount == null || isNaN(Number(d.amount))) ? null : Number(d.amount);
 const byDept = (rows, dept) => dept === 'Общее' ? rows : rows.filter(d => d.department === dept);
 const topSphere = (v) => [...d3.rollup(v, x => x.length, d => d.sphere)].filter(x => x[0] !== 'Не определено').sort((a, b) => b[1] - a[1]);
@@ -388,12 +388,12 @@ FN.summary = (deals) => DEPTS.map(dept => {
     top_manager: mm.length ? mm[0][0] : '—', top_manager_n: mm.length ? mm[0][1] : 0,
     undefined_n: v.filter(d => d.sphere === 'Не определено').length };
 });
-FN.by_dept = (deals) => d3.groups(deals, d => d.department).map(([department, v]) => {
+FN.by_dept = (deals) => d3.groups(deals, d => d.department).sort((a, b) => (a[0] === 'Бокарев' ? 0 : 1) - (b[0] === 'Бокарев' ? 0 : 1)).map(([department, v]) => {
   const managers = new Set(v.map(d => d.manager)).size; const ss = topSphere(v); const m = money(v);
   return { department, n: v.length, share: v.length / deals.length, revenue: m.revenue, avg_check: m.avg_check,
     sep: v.filter(d => month(d, '09')).length, oct: v.filter(d => month(d, '10')).length,
     managers, per_manager: Math.round(v.length / managers * 10) / 10, top_sphere: ss.length ? ss[0][0] : '' };
-}).sort((a, b) => b.n - a.n);
+});
 FN.by_sphere = (deals) => DEPTS.flatMap(dept => {
   const v = byDept(deals, dept);
   return d3.groups(v, d => d.sphere).map(([sphere, g]) => {
@@ -447,8 +447,8 @@ FN.money_team = (deals) => moneyBy(deals, d => d.department + '|' + d.team, (r, 
 FN.money_manager = (deals) => moneyBy(deals, d => d.manager, (r) => ({ manager: r.manager, team: r.team, department: r.department }));
 
 const META = {
-  summary: ['Итоги по отделам', 'Всего сделок, по месяцам, темп в рабочий день, выручка, средний чек, главная сфера и лучший менеджер — для всего отдела и по отделам Вафина и Бокарева.'],
-  by_dept: ['Сравнение отделов', 'Сделки, выручка, средний чек, продававшие менеджеры и главная сфера отделов Вафина и Бокарева.'],
+  summary: ['Итоги по отделам', 'Всего сделок, по месяцам, темп в рабочий день, выручка, средний чек, главная сфера и лучший менеджер — для всего отдела и по отделам Бокарева и Вафина.'],
+  by_dept: ['Сравнение отделов', 'Сделки, выручка, средний чек, продававшие менеджеры и главная сфера отделов Бокарева и Вафина.'],
   by_sphere: ['Сделки по сферам', 'Число успешных новых клиентов по сфере для каждого отдела и в целом: доля, сентябрь, октябрь, изменение темпа; для «Не определено» — названия клиентов.'],
   sphere_vs: ['Сферы по отделам', 'Сколько клиентов каждой сферы закрыли отделы и какая это доля от сделок отдела.'],
   by_manager: ['Сделки по менеджерам', 'Успешные новые клиенты по менеджеру: отдел, команда, всего, по месяцам, частая сфера.'],
@@ -573,7 +573,7 @@ function render() {
     document.getElementById('perDay').textContent = wd ? nf(Math.round(r.total / wd * 10) / 10) : '—';
     const all = s.data.find(x => x.dept === 'Общее'), va = s.data.find(x => x.dept === 'Вафин'), bo = s.data.find(x => x.dept === 'Бокарев');
     let t = DEPT === 'Общее'
-      ? (ROSTER === 'current' ? 'Текущий состав (17 менеджеров)' : 'Все менеджеры отдела Андриянова') + ' за ' + rangeLabel() + ' — ' + nf(all.total) + ' ' + plural(all.total, 'нового клиента', 'новых клиентов', 'новых клиентов') + ': ' + nf(va.total) + ' у Вафина и ' + nf(bo.total) + ' у Бокарева. '
+      ? (ROSTER === 'current' ? 'Текущий состав (17 менеджеров)' : 'Все менеджеры отдела Андриянова') + ' за ' + rangeLabel() + ' — ' + nf(all.total) + ' ' + plural(all.total, 'нового клиента', 'новых клиентов', 'новых клиентов') + ': ' + nf(bo.total) + ' у Бокарева и ' + nf(va.total) + ' у Вафина. '
       : 'За ' + rangeLabel() + ' — ' + nf(r.total) + ' ' + plural(r.total, 'новый клиент', 'новых клиента', 'новых клиентов') + '. ';
     if (r.revenue) t += 'Выручка ' + rub(r.revenue) + ', средний чек ' + rub(r.avg_check) + '. ';
     if (r.top_sphere && r.top_sphere !== '—') t += 'Больше всего продаётся «' + r.top_sphere + '». ';
@@ -634,8 +634,8 @@ function render() {
     fillTable('#sphereVs table', sv.data, (tr, d) => {
       keyOf(tr, d.sphere); cell(tr, d.sphere, d.sphere === 'Не определено' ? 'muted' : '');
       const more = d.vafin_share > d.bokarev_share;
-      cell(tr, nf(d.vafin), 'num'); cell(tr, pf(d.vafin_share), 'num' + (more && d.total >= 5 ? ' up' : ''));
       cell(tr, nf(d.bokarev), 'num'); cell(tr, pf(d.bokarev_share), 'num' + (!more && d.total >= 5 ? ' up' : ''));
+      cell(tr, nf(d.vafin), 'num'); cell(tr, pf(d.vafin_share), 'num' + (more && d.total >= 5 ? ' up' : ''));
     });
   }
 
